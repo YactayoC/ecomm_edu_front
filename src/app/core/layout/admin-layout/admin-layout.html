@@ -1,32 +1,38 @@
 <mat-sidenav-container class="sidenav-container">
-  <!-- Menú lateral -->
   <mat-sidenav #drawer mode="side" [(opened)]="opened" class="sidenav">
     <mat-toolbar color="primary">Admin</mat-toolbar>
     <mat-nav-list>
-      <mat-list-item *ngFor="let link of links">
-        <span matLine>{{ link.label }}</span>
-        <button mat-icon-button (click)="showInfo(link)">
-          <mat-icon>info</mat-icon>
-        </button>
+      <mat-list-item
+        *ngFor="let link of links"
+        [routerLink]="link.path"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <mat-icon matListItemIcon>{{ link.icon }}</mat-icon>
+        <div matListItemTitle>{{ link.label }}</div>
       </mat-list-item>
     </mat-nav-list>
   </mat-sidenav>
 
-  <!-- Contenido principal -->
   <mat-sidenav-content>
-    <!-- Navbar superior -->
     <mat-toolbar color="primary" class="toolbar">
       <button mat-icon-button (click)="drawer.toggle()" class="menu-button">
         <mat-icon>menu</mat-icon>
       </button>
+
       <span class="title">Panel de Administración</span>
+
       <span class="spacer"></span>
-      <button mat-icon-button>
+
+      <span *ngIf="empleado" class="empleado-info">
+        {{ empleado.nombre }} {{ empleado.apellido }}
+      </span>
+
+      <button mat-icon-button (click)="logout()">
         <mat-icon>logout</mat-icon>
       </button>
     </mat-toolbar>
 
-    <!-- Área dinámica -->
     <div class="content">
       <router-outlet></router-outlet>
     </div>

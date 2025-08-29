@@ -1,1 +1,90 @@
-<p>proveedores works!</p>
+<mat-card>
+  <mat-toolbar color="primary">
+    <span>Gestión de Proveedores</span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" (click)="abrirDialog()">
+      <mat-icon>add_business</mat-icon>
+      Nuevo Proveedor
+    </button>
+  </mat-toolbar>
+
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Buscar proveedor</mat-label>
+    <input
+      matInput
+      (keyup)="aplicarFiltro($event)"
+      placeholder="Nombre, contacto o email"
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <div *ngIf="isLoading" class="loader-container">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
+
+  <div class="tabla-container" *ngIf="!isLoading">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let proveedor">{{ proveedor.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre</th>
+        <td mat-cell *matCellDef="let proveedor">{{ proveedor.nombre }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="contacto">
+        <th mat-header-cell *matHeaderCellDef>Contacto</th>
+        <td mat-cell *matCellDef="let proveedor">{{ proveedor.contacto }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="telefono">
+        <th mat-header-cell *matHeaderCellDef>Teléfono</th>
+        <td mat-cell *matCellDef="let proveedor">{{ proveedor.telefono }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let proveedor">{{ proveedor.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="direccion">
+        <th mat-header-cell *matHeaderCellDef>Dirección</th>
+        <td mat-cell *matCellDef="let proveedor">{{ proveedor.direccion }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let proveedor">
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="abrirDialog(proveedor)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="eliminarProveedor(proveedor)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="7" style="text-align: center">
+          No hay Proveedores disponibles
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</mat-card>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
@@ -24,14 +24,30 @@ import { CommonModule } from '@angular/common';
 })
 export class AdminLayoutComponent {
   opened = true;
+  empleado: any = null;
+
   links = [
-    { path: '/admin/empleados', label: 'Empleados' },
-    { path: '/admin/productos', label: 'Productos' },
-    { path: '/admin/proveedores', label: 'Proveedores' },
-    { path: '/admin/categorias', label: 'Categorías' },
+    { path: '/admin/empleados', label: 'Empleados', icon: 'people' },
+    { path: '/admin/productos', label: 'Productos', icon: 'inventory_2' },
+    {
+      path: '/admin/proveedores',
+      label: 'Proveedores',
+      icon: 'local_shipping',
+    },
+    { path: '/admin/categorias', label: 'Categorías', icon: 'category' },
   ];
 
-  showInfo(link: any) {
-    console.log('Info de:', link);
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    const storedEmpleado = localStorage.getItem('empleado');
+    if (storedEmpleado) {
+      this.empleado = JSON.parse(storedEmpleado);
+    }
+  }
+
+  logout() {
+    localStorage.removeItem('empleado');
+    this.router.navigate(['/login']);
   }
 }

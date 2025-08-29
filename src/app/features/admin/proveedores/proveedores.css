@@ -1,0 +1,14 @@
+.tabla-container {
+  overflow: auto;
+  margin-top: 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}

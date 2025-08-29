@@ -1,10 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  AfterViewInit,
-  Component,
-  ViewChild,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,27 +7,24 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { CategoriaDialogComponent } from './categoria-dialog';
+import { EmpleadoConfirmDialogComponent } from '../empleados/empleado-confirm-dialog';
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { FormsModule } from '@angular/forms';
+import { CategoriaService } from '../../../core/services/categoria.service';
 import { MatSpinner } from '@angular/material/progress-spinner';
+import { ChangeDetectorRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-import { ProveedorService } from '../../../core/services/proveedor.service';
-import { ProveedorConfirmDialogComponent } from './proveedores-confirm-dialog';
-import { ProveedorDialogComponent } from './proveedor-dialog';
-
-export interface Proveedor {
+export interface Categoria {
   id: number;
   nombre: string;
-  contacto: string;
-  telefono: string;
-  email: string;
-  direccion: string;
+  descripcion?: string;
 }
 
 @Component({
-  selector: 'app-proveedores',
+  selector: 'app-categorias',
   imports: [
     CommonModule,
     MatTableModule,
@@ -47,52 +39,41 @@ export interface Proveedor {
     MatDialogModule,
     MatSpinner,
   ],
-  templateUrl: './proveedores.html',
-  styleUrl: './proveedores.css',
+  templateUrl: './categorias.html',
+  styleUrl: './categorias.css',
 })
-export class ProveedoresComponent implements AfterViewInit {
-  displayedColumns: string[] = [
-    'id',
-    'nombre',
-    'contacto',
-    'telefono',
-    'email',
-    'direccion',
-    'acciones',
-  ];
-  dataSource = new MatTableDataSource<Proveedor>([]);
+export class CategoriasComponent implements AfterViewInit {
+  displayedColumns: string[] = ['id', 'nombre', 'descripcion', 'acciones'];
+  dataSource = new MatTableDataSource<Categoria>([]);
   isLoading = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private dialog: MatDialog,
-    private proveedorService: ProveedorService,
+    private categoriaService: CategoriaService,
     private cdr: ChangeDetectorRef
   ) {
-    this.dataSource.filterPredicate = (data: Proveedor, filter: string) => {
+    this.dataSource.filterPredicate = (data: Categoria, filter: string) => {
       const term = filter.trim().toLowerCase();
       return (
         String(data.id).toLowerCase().includes(term) ||
         data.nombre.toLowerCase().includes(term) ||
-        data.contacto.toLowerCase().includes(term) ||
-        data.telefono.toLowerCase().includes(term) ||
-        data.email.toLowerCase().includes(term) ||
-        data.direccion.toLowerCase().includes(term)
+        (data.descripcion?.toLowerCase().includes(term) ?? false)
       );
     };
   }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
-    this.cargarProveedores();
+    this.cargarCategorias();
   }
 
-  cargarProveedores() {
+  cargarCategorias() {
     this.isLoading = true;
-    this.proveedorService.getProveedores().subscribe({
-      next: (proveedores) => {
-        this.dataSource.data = proveedores;
+    this.categoriaService.getCategorias().subscribe({
+      next: (categorias) => {
+        this.dataSource.data = categorias;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -110,40 +91,46 @@ export class ProveedoresComponent implements AfterViewInit {
     if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
   }
 
-  abrirDialog(proveedor?: Proveedor) {
-    const dialogRef = this.dialog.open(ProveedorDialogComponent, {
-      width: '480px',
-      data: proveedor ? { ...proveedor } : null,
+  abrirDialog(categoria?: Categoria) {
+    const dialogRef = this.dialog.open(CategoriaDialogComponent, {
+      width: '420px',
+      data: categoria ? { ...categoria } : null,
     });
 
-    dialogRef.afterClosed().subscribe((result: Proveedor | undefined) => {
+    dialogRef.afterClosed().subscribe((result: Categoria | undefined) => {
       if (!result) return;
 
-      if (proveedor) {
-        this.proveedorService
-          .actualizarProveedor(proveedor.id, result)
-          .subscribe(() => this.cargarProveedores());
+      if (categoria) {
+        this.categoriaService
+          .updateCategoria(categoria.id, {
+            nombre: result.nombre,
+            descripcion: result.descripcion,
+          })
+          .subscribe(() => this.cargarCategorias());
       } else {
-        this.proveedorService
-          .crearProveedor(result)
-          .subscribe(() => this.cargarProveedores());
+        this.categoriaService
+          .createCategoria({
+            nombre: result.nombre,
+            descripcion: result.descripcion,
+          })
+          .subscribe(() => this.cargarCategorias());
       }
     });
   }
 
-  eliminarProveedor(proveedor: Proveedor) {
-    const dialogRef = this.dialog.open(ProveedorConfirmDialogComponent, {
+  eliminarCategoria(categoria: Categoria) {
+    const dialogRef = this.dialog.open(EmpleadoConfirmDialogComponent, {
       width: '360px',
       data: {
-        mensaje: `¿Seguro que deseas eliminar el proveedor "${proveedor.nombre}"?`,
+        mensaje: `¿Seguro que deseas eliminar la categoría "${categoria.nombre}"?`,
       },
     });
 
     dialogRef.afterClosed().subscribe((confirmado: boolean) => {
       if (confirmado) {
-        this.proveedorService
-          .eliminarProveedor(proveedor.id)
-          .subscribe(() => this.cargarProveedores());
+        this.categoriaService
+          .deleteCategoria(categoria.id)
+          .subscribe(() => this.cargarCategorias());
       }
     });
   }
