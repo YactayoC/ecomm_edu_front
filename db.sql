@@ -1,10 +1,12 @@
+CREATE DATABASE IF NOT EXISTS ecommerce_edu;
 
+USE ecommerce_edu;
 -- ======================================
 -- TABLA ROLES
 -- ======================================
 CREATE TABLE rol (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL UNIQUE,   -- Ej: ADMIN, VENDEDOR, ALMACENISTA
+    nombre VARCHAR(50) NOT NULL UNIQUE,  
     descripcion VARCHAR(255)
 );
 
@@ -16,8 +18,8 @@ CREATE TABLE empleado (
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,       -- contraseña hasheada (BCrypt/Argon2)
-    rol_id BIGINT NOT NULL,               -- FK hacia tabla rol
+    password VARCHAR(255) NOT NULL,    
+    rol_id BIGINT NOT NULL,              
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -72,7 +74,7 @@ CREATE TABLE producto (
 );
 
 -- ======================================
--- DATOS INICIALES (Opcional)
+-- DATOS INICIALES
 -- ======================================
 
 -- Roles base

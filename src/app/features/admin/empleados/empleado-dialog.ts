@@ -105,7 +105,7 @@ export class EmpleadoDialogComponent {
       nombre: [this.data?.nombre || '', Validators.required],
       apellido: [this.data?.apellido || '', Validators.required],
       email: [this.data?.email || '', [Validators.required, Validators.email]],
-      rolId: [this.data?.rolId || null, Validators.required], // Selección por defecto
+      rolId: [this.data?.rolId || null, Validators.required],
     });
 
     this.rolService.getRoles().subscribe({

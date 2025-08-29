@@ -11,6 +11,6 @@ export const routes: Routes = [
     path: 'admin',
     children: ADMIN_ROUTES,
   },
-  { path: '', redirectTo: 'admin', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' },
 ];
